@@ -24,26 +24,28 @@ const db = mysql.createConnection({
 })
 
 
-// Middleware to verify user authentication
+
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-      console.log("No token found");
-      return res.status(401).json({ error: "You are not authenticated" });
+    console.log("No token found");
+    return res.status(401).json({ error: "You are not authenticated" });
   } else {
-      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-          if (err) {
-              console.log("Invalid token:", err.message);
-              return res.status(401).json({ error: "Token is not valid" });
-          } else {
-              console.log("Decoded token:", decoded);
-              req.userId = decoded.userId;
-              req.email = decoded.email;
-              req.role = decoded.role; 
-              req.firstName = decoded.firstName;
-              next();
-          }
-      });
+    jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+      if (err) {
+        console.log("Invalid token:", err.message);
+        return res.status(401).json({ error: "Token is not valid" });
+      } else {
+        console.log("Decoded token:", decoded);
+        req.userId = decoded.userId;
+        req.email = decoded.email;
+        req.role = decoded.role;
+        req.firstName = decoded.firstName;
+        // Set isAdmin flag based on user role
+        req.isAdmin = decoded.role === 'admin';
+        next();
+      }
+    });
   }
 };
 
@@ -90,17 +92,17 @@ app.get('/', verifyUser, (req, res) => {
 app.use('/rejected/list', verifyAdmin);
 
 
-app.get('/rejected/list', (req, res) => {
-    // Access isAdmin flag to check if user is an admin
-    if (req.isAdmin) {
-        // User is admin, allow access
-        res.send('Welcome to rejected list (Admin)');
-    } else {
-        // User is not admin, deny access
-        res.status(403).send('Access Forbidden: You are not an admin.');
-    }
+// Routes
+app.get('/rejected/list', verifyUser, verifyAdmin, (req, res) => {
+  // Access isAdmin flag to check if user is an admin
+  if (req.isAdmin) {
+    // User is admin, allow access
+    res.send('Welcome to rejected list (Admin)');
+  } else {
+    // User is not admin, deny access
+    res.status(403).send('Access Forbidden: You are not an admin.');
+  }
 });
-
   //API endpoint to create register
 app.post('/register', (req, res) => {
     const { firstName, lastName, email, contactNumber, password, confirmPassword } = req.body;
