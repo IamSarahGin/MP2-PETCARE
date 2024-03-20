@@ -23,21 +23,21 @@ const db = mysql.createConnection({
     database: "bpqdps7jseiq3tz9uhbn"
 })
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
+
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token; // Retrieve token from cookies
+  console.log('Token:', token); // Log the token to check if it's present
   if (!token) {
+      console.log('No token found');
       return res.status(401).json({ error: "You are not authenticated" });
   } else {
       jwt.verify(token, "jwt-secret-key", (err, decoded) => {
           if (err) {
+              console.log('Token verification failed:', err);
               return res.status(401).json({ error: "Token is not valid" });
           } else {
+              console.log('Token decoded:', decoded);
               req.userId = decoded.userId;
               req.email = decoded.email;
               req.role = decoded.role;
@@ -163,15 +163,23 @@ app.post('/login', (req, res) => {
 });
 
 
+// API endpoint to check user authentication status
 app.get('/auth/status', verifyUser, (req, res) => {
-    return res.json({
-        status: "Success",
-        loggedIn: true,
-        firstName: req.firstName,
-        email: req.email,
-        userId: req.userId,
-        role:req.role
-    });
+  return res.json({
+      status: "Success",
+      loggedIn: true,
+      firstName: req.firstName,
+      email: req.email,
+      userId: req.userId,
+      role: req.role
+  });
+});
+
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 app.get('/logout', (req, res) => {
