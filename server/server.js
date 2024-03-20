@@ -23,7 +23,18 @@ const db = mysql.createConnection({
     database: "bpqdps7jseiq3tz9uhbn"
 })
 
-
+// Allow requests from specified origins
+const allowedOrigins = ['https://mp-2-pet-care.vercel.app'];
+app.use(cors({
+  origin: function (origin, callback) {
+    // Check if the origin is allowed, or if it's a preflight OPTIONS request
+    if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost")) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 // Middleware to verify user authentication
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
