@@ -148,7 +148,8 @@ app.post('/login', (req, res) => {
                   // Generate token
                   const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
                   // Set token in cookie
-                  res.cookie("token", token, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 24 * 60 * 60 * 1000 });
+                  res.cookie("token", token, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });
+
  // 1 day expiry
                   return res.json({ Status: "Success", role: role }); 
               } else {
