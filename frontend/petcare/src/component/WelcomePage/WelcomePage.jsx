@@ -1,3 +1,4 @@
+// WelcomePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +15,7 @@ const WelcomePage = () => {
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
-    axios.get('https://mp2-petcare.onrender.com/auth/status')
+    axios.get('https://mp2-petcare.onrender.com/auth/status', { withCredentials: true })
       .then(res => {
         console.log('Response from API:', res); 
         if (res.data.status === 'Success') {
