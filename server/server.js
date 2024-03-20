@@ -332,7 +332,7 @@ app.post('/api/bookings/reject', verifyUser, verifyAdmin, (req, res) => {
 
 // API endpoint to fetch approved bookings
 app.get('/api/bookings/approved', verifyUser, verifyAdmin, (req, res) => {
-  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON Booking.userId = users.userId WHERE Booking.status = ?';
+  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON booking.userId = users.userId WHERE booking.status = ?';
   db.query(query, ['approved'], (err, results) => {
       if (err) {
           console.error('Error fetching approved bookings:', err);
@@ -344,7 +344,7 @@ app.get('/api/bookings/approved', verifyUser, verifyAdmin, (req, res) => {
 
 // API endpoint to fetch rejected bookings
 app.get('/api/bookings/rejected', verifyUser, verifyAdmin, (req, res) => {
-  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON Booking.userId = users.userId WHERE Booking.status = ?';
+  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON booking.userId = users.userId WHERE booking.status = ?';
   db.query(query, ['rejected'], (err, results) => {
       if (err) {
           console.error('Error fetching rejected bookings:', err);
