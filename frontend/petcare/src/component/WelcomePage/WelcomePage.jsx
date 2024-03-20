@@ -12,26 +12,28 @@ const WelcomePage = () => {
   const [firstName, setFirstName] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.defaults.withCredentials = true;
-    axios.get('http://localhost:3001/auth/status')
-      .then(res => {
-        console.log('Response from API:', res); 
-        if (res.data.status === 'Success') {
-          setAuth(true);
-          setFirstName(res.data.firstName);
-        } else {
-          setAuth(false);
-          navigate('/access-denied'); 
-        }
-      })
-      .catch(err => {
-        console.error('Error:', err);
+  // In the WelcomePage component
+
+useEffect(() => {
+  axios.defaults.withCredentials = true;
+  axios.get('http://localhost:3001/auth/status')
+    .then(res => {
+      if (res.data.status === 'Success') {
+        setAuth(true);
+        setFirstName(res.data.firstName);
+      } else {
         setAuth(false);
+        console.error('Authentication failed:', res.data); // Log the response for debugging
         navigate('/access-denied'); 
-      });
-  }, [navigate]);
-  
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching authentication status:', err); // Log any errors for debugging
+      setAuth(false);
+      navigate('/access-denied'); 
+    });
+}, [navigate]);
+
   return (
     <div id="wrapper">
       {auth ? (
