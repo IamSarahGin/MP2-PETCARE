@@ -150,7 +150,6 @@ app.post('/login', (req, res) => {
                   const email = data[0].email;
                   const role = data[0].role; // Include user role
                   // Generate token
-                  // After successful login and generating token
                   const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
                   // Set token in cookie
                   res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
@@ -164,6 +163,7 @@ app.post('/login', (req, res) => {
       }
   });
 });
+
 
 app.get('/auth/status', verifyUser, (req, res) => {
     return res.json({
