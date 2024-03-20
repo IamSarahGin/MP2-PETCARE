@@ -21,7 +21,7 @@ const Register = () => {
     useEffect(() => {
         const fetchImage = async () => {
             try {
-                const response = await axios.get('https://mp2-petcare.onrender.com/loginpageandregisterpage');
+                const response = await axios.get('http://localhost:3000/loginpageandregisterpage');
                 const imageUrl = response.data[0].image;
                 setValues({ ...values, imageUrl });
             } catch (error) {
@@ -33,7 +33,7 @@ const Register = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post('https://mp2-petcare.onrender.com/register', values)
+        axios.post('http://localhost:3000/register', values)
             .then(res => {
                 if (res.data.Status === 'Success') {
                     setAlertMessage('Account created');

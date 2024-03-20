@@ -18,7 +18,7 @@ const AdminNaviDrawer = ({ adminNavData }) => {
     
     const handleLogoutClick = () => {
         console.log("Logging out...");
-        axios.get('https://mp2-petcare.onrender.com/logout', { withCredentials: true })
+        axios.get('http://localhost:3000/logout', { withCredentials: true })
             .then(res => {
                 console.log("Logout response:", res);
                 if (res.status === 200) {
