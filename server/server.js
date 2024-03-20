@@ -10,8 +10,8 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app"],
-    method: ["POST", "GET"],
+    origin: ["http://localhost:3000", "https://inspiring-taiyaki-60b739.netlify.app"],
+    methods: ["POST", "GET"],
     credentials: true
 }));
 
@@ -23,6 +23,11 @@ const db = mysql.createConnection({
     database: "bpqdps7jseiq3tz9uhbn"
 })
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
 
 
 const verifyUser = (req, res, next) => {
