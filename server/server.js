@@ -10,7 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://deft-crostata-22e21b.netlify.app"],
+    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app/"],
     method: ["POST", "GET"],
     credentials: true
 }));
