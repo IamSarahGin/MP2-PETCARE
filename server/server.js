@@ -87,7 +87,7 @@ app.get('/', verifyUser, (req, res) => {
 });
 
  
-app.use('/rejected/list', verifyAdmin);
+
 
 
 // Routes
