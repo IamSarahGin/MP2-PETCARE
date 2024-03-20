@@ -28,24 +28,25 @@ const db = mysql.createConnection({
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
-    console.log("No token found");
-    return res.status(401).json({ error: "You are not authenticated" });
+      console.log("No token found");
+      return res.status(401).json({ error: "You are not authenticated" });
   } else {
-    jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-      if (err) {
-        console.log("Invalid token:", err.message);
-        return res.status(401).json({ error: "Token is not valid" });
-      } else {
-        console.log("Decoded token:", decoded);
-        req.userId = decoded.userId;
-        req.email = decoded.email;
-        req.role = decoded.role; 
-        req.firstName=decoded.firstName;
-        next();
-      }
-    });
+      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+          if (err) {
+              console.log("Invalid token:", err.message);
+              return res.status(401).json({ error: "Token is not valid" });
+          } else {
+              console.log("Decoded token:", decoded);
+              req.userId = decoded.userId;
+              req.email = decoded.email;
+              req.role = decoded.role; 
+              req.firstName = decoded.firstName;
+              next();
+          }
+      });
   }
 };
+
 
 
 // Middleware to verify admin role
