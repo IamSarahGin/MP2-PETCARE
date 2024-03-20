@@ -10,7 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app"],
+    origin: ["http://localhost:3000", "https://mp-2-pet-care-376my9o20-iamsarahgins-projects.vercel.app"],
     methods: ["POST", "GET"],
     credentials: true
 }));
