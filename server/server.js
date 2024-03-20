@@ -10,7 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://inspiring-taiyaki-60b739.netlify.app"],
+    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app"],
     methods: ["POST", "GET"],
     credentials: true
 }));
