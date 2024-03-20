@@ -25,7 +25,7 @@ const UserNavi = () => {
     useEffect(() => {
         const fetchUserNavData = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/user_navigation');
+                const response = await axios.get('http://localhost:3001/user_navigation');
                 setUserNavData(response.data[0]);
             } catch (error) {
                 console.error('Error fetching navigation data:', error);
