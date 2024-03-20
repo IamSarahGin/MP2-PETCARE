@@ -134,31 +134,38 @@ app.post('/register', (req, res) => {
     });
 });
 
-// POST endpoint for user login
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const sql = 'SELECT * FROM users WHERE email=?';
+  
   db.query(sql, [email], (err, data) => {
-      if (err) return res.status(500).json({ Error: "Login error in server" });
-      if (data.length > 0) {
-          bcrypt.compare(password.toString(), data[0].password, (err, response) => {
-              if (err) return res.status(500).json({ Error: "Password compare error" });
-              if (response) {
-                  const { userId, firstName, email, role } = data[0];
-                  // Generate token
-                  const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
-                  // Set token in cookie
-                  res.cookie("token", token, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });
+    if (err) {
+      console.error('Error during login:', err);
+      return res.status(500).json({ Error: "Login error in server" });
+    }
 
- // 1 day expiry
-                  return res.json({ Status: "Success", role: role }); 
-              } else {
-                  return res.status(401).json({ Error: "Incorrect email or password" }); // Unauthorized
-              }
-          });
-      } else {
-          return res.status(401).json({ Error: "Incorrect email or password" }); // Unauthorized
-      }
+    if (data.length > 0) {
+      const hashedPassword = data[0].password; // Assuming password is stored as hashed in the database
+      bcrypt.compare(password, hashedPassword, (err, response) => {
+        if (err) {
+          console.error('Error comparing passwords:', err);
+          return res.status(500).json({ Error: "Password comparison error" });
+        }
+
+        if (response) {
+          const { userId, firstName, email, role } = data[0];
+          const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
+
+          // Set token in cookie
+          res.cookie("token", token, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });
+          return res.json({ Status: "Success", role: role });
+        } else {
+          return res.status(401).json({ Error: "Incorrect email or password" });
+        }
+      });
+    } else {
+      return res.status(401).json({ Error: "Incorrect email or password" });
+    }
   });
 });
 
