@@ -29,36 +29,33 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong!');
 });
 
-
-// Middleware to verify user authentication
 const verifyUser = (req, res, next) => {
-    const token = req.cookies.token; // Retrieve token from cookies
-    if (!token) {
-        return res.status(401).json({ error: "You are not authenticated" });
-    } else {
-        jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ error: "Token is not valid" });
-            } else {
-                req.userId = decoded.userId;
-                req.email = decoded.email;
-                req.role = decoded.role;
-                req.firstName = decoded.firstName;
-                req.isAdmin = decoded.role === 'admin';
-                next();
-            }
-        });
-    }
+  const token = req.cookies.token; // Retrieve token from cookies
+  if (!token) {
+      return res.status(401).json({ error: "You are not authenticated" });
+  } else {
+      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+          if (err) {
+              return res.status(401).json({ error: "Token is not valid" });
+          } else {
+              req.userId = decoded.userId;
+              req.email = decoded.email;
+              req.role = decoded.role;
+              req.firstName = decoded.firstName;
+              req.isAdmin = decoded.role === 'admin';
+              next();
+          }
+      });
+  }
 };
-
 
 // Middleware to verify admin role
 const verifyAdmin = (req, res, next) => {
   const userRole = req.role;
   if (userRole === 'admin') {
-    return next(); // User is authorized, proceed to the next middleware
+      return next(); // User is authorized, proceed to the next middleware
   } else {
-    return res.status(403).json({ error: 'Unauthorized' }); // User is not authorized
+      return res.status(403).json({ error: 'Unauthorized: You are not an admin' }); 
   }
 };
 
