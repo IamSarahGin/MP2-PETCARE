@@ -134,33 +134,32 @@ app.post('/register', (req, res) => {
     });
 });
 
+// POST endpoint for user login
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const sql = 'SELECT * FROM users WHERE email=?';
   db.query(sql, [email], (err, data) => {
-      if (err) return res.json({ Error: "Login error in server" });
+      if (err) return res.status(500).json({ Error: "Login error in server" });
       if (data.length > 0) {
           bcrypt.compare(password.toString(), data[0].password, (err, response) => {
-              if (err) return res.json({ Error: "Password compare error" });
+              if (err) return res.status(500).json({ Error: "Password compare error" });
               if (response) {
-                  const userId = data[0].userId;
-                  const firstName = data[0].firstName;
-                  const email = data[0].email;
-                  const role = data[0].role; // Include user role
+                  const { userId, firstName, email, role } = data[0];
                   // Generate token
                   const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
                   // Set token in cookie
                   res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
                   return res.json({ Status: "Success", role: role }); 
               } else {
-                  return res.json({ Error: "Password not matched" });
+                  return res.status(401).json({ Error: "Incorrect email or password" }); // Unauthorized
               }
           });
       } else {
-          return res.json({ Error: "No email existed" });
+          return res.status(401).json({ Error: "Incorrect email or password" }); // Unauthorized
       }
   });
 });
+
 
 
 // API endpoint to check user authentication status
