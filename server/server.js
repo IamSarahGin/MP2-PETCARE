@@ -38,7 +38,7 @@ const verifyUser = (req, res, next) => {
         req.userId = decoded.userId;
         req.email = decoded.email;
         req.role = decoded.role; 
-        req.firstName=decoded.firstName;
+        req.firstName = decoded.firstName;
         next();
       }
     });
@@ -55,7 +55,17 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
- // API endpoint to fetch user profile data
+// Routes
+app.get('/', verifyUser, (req, res) => {
+  return res.json({
+    Status: "Success",
+    firstName: req.firstName,
+    email: req.email,
+    userId: req.userId
+  });
+});
+
+// API endpoint to fetch user profile data
 app.get('/api/user/profile', verifyUser, (req, res) => {
   const userId = req.userId;
   const getUserQuery = 'SELECT userId, firstName, lastName, email, role FROM users WHERE userId = ?';
@@ -72,32 +82,7 @@ app.get('/api/user/profile', verifyUser, (req, res) => {
   });
 });
 
-  // Routes
-app.get('/', verifyUser, (req, res) => {
-  return res.json({
-    Status: "Success",
-    firstName: req.firstName,
-    email: req.email,
-    userId: req.userId
-  });
-});
-
- 
-app.use('/rejected/list', verifyAdmin);
-
-
-app.get('/rejected/list', (req, res) => {
-    // Access isAdmin flag to check if user is an admin
-    if (req.isAdmin) {
-        // User is admin, allow access
-        res.send('Welcome to rejected list (Admin)');
-    } else {
-        // User is not admin, deny access
-        res.status(403).send('Access Forbidden: You are not an admin.');
-    }
-});
-
-  //API endpoint to create register
+// API endpoint to create register
 app.post('/register', (req, res) => {
     const { firstName, lastName, email, contactNumber, password, confirmPassword } = req.body;
     // Check if the password and confirm password match
@@ -130,6 +115,7 @@ app.post('/register', (req, res) => {
     });
 });
 
+// API endpoint to authenticate users
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const sql = 'SELECT * FROM users WHERE email=?';
@@ -144,7 +130,6 @@ app.post('/login', (req, res) => {
                   const email = data[0].email;
                   const role = data[0].role; // Include user role
                   // Generate token
-                  // After successful login and generating token
                   const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
                   // Set token in cookie
                   res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
@@ -159,6 +144,7 @@ app.post('/login', (req, res) => {
   });
 });
 
+// API endpoint to get user authentication status
 app.get('/auth/status', verifyUser, (req, res) => {
     return res.json({
         status: "Success",
@@ -170,10 +156,12 @@ app.get('/auth/status', verifyUser, (req, res) => {
     });
 });
 
+// API endpoint to logout users
 app.get('/logout', (req, res) => {
     res.clearCookie('token');
     return res.json({ Status: "Success" });
 });
+
 
 app.get('/api/currentUserLoginId', verifyUser, (req, res) => {
     return res.json({ userId: req.userId });
