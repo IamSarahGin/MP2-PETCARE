@@ -1,51 +1,47 @@
-import express from 'express';
-import mysql from 'mysql';
-import cors from 'cors';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
-import cookieParser from 'cookie-parser';
+import express from 'express'
+import mysql from 'mysql'
+import cors from 'cors'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
+import cookieParser from 'cookie-parser'
 
 const salt = 10;
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app", "https://deft-crostata-22e21b.netlify.app"],
-    methods: ["POST", "GET"],
+    origin: ["http://localhost:3000", "https://deft-crostata-22e21b.netlify.app"],
+    method: ["POST", "GET"],
     credentials: true
 }));
 
+
 const db = mysql.createConnection({
-    host: "bpqdps7jseiq3tz9uhbn-mysql.services.clever-cloud.com",
-    user: "u82plvrejz57d3ny",
-    password: "6I916ct2X2nGs5orWRXq",
-    database: "bpqdps7jseiq3tz9uhbn"
+  host: "bpqdps7jseiq3tz9uhbn-mysql.services.clever-cloud.com",
+  user: "u82plvrejz57d3ny",
+  password: "6I916ct2X2nGs5orWRXq",
+  database: "bpqdps7jseiq3tz9uhbn"
 });
 
 
 
-
+// Middleware to verify user authentication
 const verifyUser = (req, res, next) => {
-  const token = req.cookies.token; // Retrieve token from cookies
-  console.log('Token:', token); // Log the token to check if it's present
+  const token = req.cookies.token;
   if (!token) {
-      console.log('No token found');
-      return res.status(401).json({ error: "You are not authenticated" });
+    return res.status(401).json({ error: "You are not authenticated" });
   } else {
-      jwt.verify(token, "jwt-secret-key", (err, decoded) => {
-          if (err) {
-              console.log('Token verification failed:', err);
-              return res.status(401).json({ error: "Token is not valid" });
-          } else {
-              console.log('Token decoded:', decoded);
-              req.userId = decoded.userId;
-              req.email = decoded.email;
-              req.role = decoded.role;
-              req.firstName = decoded.firstName;
-              req.isAdmin = decoded.role === 'admin';
-              next();
-          }
-      });
+    jwt.verify(token, "jwt-secret-key", (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ error: "Token is not valid" });
+      } else {
+        req.userId = decoded.userId;
+        req.email = decoded.email;
+        req.role = decoded.role; 
+        req.firstName=decoded.firstName;
+        next();
+      }
+    });
   }
 };
 
@@ -53,12 +49,11 @@ const verifyUser = (req, res, next) => {
 const verifyAdmin = (req, res, next) => {
   const userRole = req.role;
   if (userRole === 'admin') {
-      return next(); // User is authorized, proceed to the next middleware
+    return next(); // User is authorized, proceed to the next middleware
   } else {
-      return res.status(403).json({ error: 'Unauthorized: You are not an admin' }); 
+    return res.status(403).json({ error: 'Unauthorized' }); // User is not authorized
   }
 };
-
 
  // API endpoint to fetch user profile data
 app.get('/api/user/profile', verifyUser, (req, res) => {
@@ -88,20 +83,20 @@ app.get('/', verifyUser, (req, res) => {
 });
 
  
+app.use('/rejected/list', verifyAdmin);
 
 
-
-// Routes
-app.get('/rejected/list', verifyUser, verifyAdmin, (req, res) => {
-  // Access isAdmin flag to check if user is an admin
-  if (req.isAdmin) {
-    // User is admin, allow access
-    res.send('Welcome to rejected list (Admin)');
-  } else {
-    // User is not admin, deny access
-    res.status(403).send('Access Forbidden: You are not an admin.');
-  }
+app.get('/rejected/list', (req, res) => {
+    // Access isAdmin flag to check if user is an admin
+    if (req.isAdmin) {
+        // User is admin, allow access
+        res.send('Welcome to rejected list (Admin)');
+    } else {
+        // User is not admin, deny access
+        res.status(403).send('Access Forbidden: You are not an admin.');
+    }
 });
+
   //API endpoint to create register
 app.post('/register', (req, res) => {
     const { firstName, lastName, email, contactNumber, password, confirmPassword } = req.body;
@@ -138,54 +133,42 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const sql = 'SELECT * FROM users WHERE email=?';
-  
   db.query(sql, [email], (err, data) => {
-    if (err) {
-      console.error('Error during login:', err);
-      return res.status(500).json({ Error: "Login error in server" });
-    }
-
-    if (data.length > 0) {
-      const hashedPassword = data[0].password; // Assuming password is stored as hashed in the database
-      bcrypt.compare(password, hashedPassword, (err, response) => {
-        if (err) {
-          console.error('Error comparing passwords:', err);
-          return res.status(500).json({ Error: "Password comparison error" });
-        }
-
-        if (response) {
-          const { userId, firstName, email, role } = data[0];
-          const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
-
-          // Set token in cookie
-          res.cookie("token", token, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });
-          return res.json({ Status: "Success", role: role });
-        } else {
-          return res.status(401).json({ Error: "Incorrect email or password" });
-        }
-      });
-    } else {
-      return res.status(401).json({ Error: "Incorrect email or password" });
-    }
+      if (err) return res.json({ Error: "Login error in server" });
+      if (data.length > 0) {
+          bcrypt.compare(password.toString(), data[0].password, (err, response) => {
+              if (err) return res.json({ Error: "Password compare error" });
+              if (response) {
+                  const userId = data[0].userId;
+                  const firstName = data[0].firstName;
+                  const email = data[0].email;
+                  const role = data[0].role; // Include user role
+                  // Generate token
+                  // After successful login and generating token
+                  const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
+                  // Set token in cookie
+                  res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
+                  return res.json({ Status: "Success", role: role }); 
+              } else {
+                  return res.json({ Error: "Password not matched" });
+              }
+          });
+      } else {
+          return res.json({ Error: "No email existed" });
+      }
   });
 });
 
-
-
-// API endpoint to check user authentication status
 app.get('/auth/status', verifyUser, (req, res) => {
-  return res.json({
-      status: "Success",
-      loggedIn: true,
-      firstName: req.firstName,
-      email: req.email,
-      userId: req.userId,
-      role: req.role
-  });
+    return res.json({
+        status: "Success",
+        loggedIn: true,
+        firstName: req.firstName,
+        email: req.email,
+        userId: req.userId,
+        role:req.role
+    });
 });
-
-
-
 
 app.get('/logout', (req, res) => {
     res.clearCookie('token');
@@ -206,7 +189,7 @@ app.post('/bookings', verifyUser, (req, res) => {
   const { petName, petId, breed, age, color, serviceId, date, time, symptoms } = req.body;
   const userId = req.userId; 
   const email = req.email; 
-  const insertBookingQuery = 'INSERT INTO booking (petName, petId, breed, age, color, serviceId, date, time, symptoms, userId, userEmail, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const insertBookingQuery = 'INSERT INTO Booking (petName, petId, breed, age, color, serviceId, date, time, symptoms, userId, userEmail, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   const status = 'pending'; 
   db.query(insertBookingQuery, [petName, petId, breed, age, color, serviceId, date, time, symptoms, userId, email, status], (err, result) => {
     if (err) {
@@ -224,10 +207,10 @@ app.post('/bookings', verifyUser, (req, res) => {
 app.get('/bookings', verifyUser, (req, res) => {
   const userId = req.userId; 
   const getBookingsQuery = `
-  SELECT booking.*, users.email AS userEmail
-  FROM booking 
-  INNER JOIN users ON booking.userId = users.userId 
-  WHERE booking.userId = ?`;
+  SELECT Booking.*, Users.email AS userEmail
+  FROM Booking 
+  INNER JOIN Users ON Booking.userId = Users.userId 
+  WHERE Booking.userId = ?`;
   db.query(getBookingsQuery, [userId], (err, results) => {
       if (err) {
           console.error('Error fetching bookings:', err);
@@ -244,7 +227,7 @@ app.get('/existingBookings', verifyUser, (req, res) => {
 
   // Query to check if there are existing bookings for the user and date
   const checkExistingBookingsQuery = `
-    SELECT * FROM booking
+    SELECT * FROM Booking
     WHERE userId = ? AND date = ?`;
 
   db.query(checkExistingBookingsQuery, [userId, date], (err, results) => {
@@ -343,7 +326,7 @@ app.post('/api/bookings/reject', verifyUser, verifyAdmin, (req, res) => {
 
 // API endpoint to fetch approved bookings
 app.get('/api/bookings/approved', verifyUser, verifyAdmin, (req, res) => {
-  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON booking.userId = users.userId WHERE booking.status = ?';
+  const query = 'SELECT Booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON Booking.userId = users.userId WHERE Booking.status = ?';
   db.query(query, ['approved'], (err, results) => {
       if (err) {
           console.error('Error fetching approved bookings:', err);
@@ -355,7 +338,7 @@ app.get('/api/bookings/approved', verifyUser, verifyAdmin, (req, res) => {
 
 // API endpoint to fetch rejected bookings
 app.get('/api/bookings/rejected', verifyUser, verifyAdmin, (req, res) => {
-  const query = 'SELECT booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON booking.userId = users.userId WHERE booking.status = ?';
+  const query = 'SELECT Booking.*, users.firstName, users.lastName, users.email FROM booking INNER JOIN users ON Booking.userId = users.userId WHERE Booking.status = ?';
   db.query(query, ['rejected'], (err, results) => {
       if (err) {
           console.error('Error fetching rejected bookings:', err);
@@ -678,11 +661,7 @@ app.delete('/api/pet/:petId', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something went wrong!');
-});
+
 
 app.listen(3001,()=>{
     console.log('Server is running...')
