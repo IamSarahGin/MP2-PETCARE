@@ -10,7 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app", "https://deft-crostata-22e21b.netlify.app"],
+    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app", "https://65fb2049a8d65d0aada127dd--deft-crostata-22e21b.netlify.app"],
     methods: ["POST", "GET"],
     credentials: true
 }));
@@ -58,9 +58,9 @@ const verifyAdmin = (req, res, next) => {
       return res.status(403).json({ error: 'Unauthorized: You are not an admin' }); 
   }
 };
-// CORS middleware
+/// CORS middleware
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Origin', 'https://65fb2049a8d65d0aada127dd--deft-crostata-22e21b.netlify.app'); // Update with your frontend origin
   res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
@@ -71,6 +71,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+
  // API endpoint to fetch user profile data
 app.get('/api/user/profile', verifyUser, (req, res) => {
   const userId = req.userId;
