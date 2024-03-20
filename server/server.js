@@ -9,11 +9,13 @@ const salt = 10;
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app","https://deft-crostata-22e21b.netlify.app"],
-    methods: ["POST", "GET"],
-    credentials: true
-}));
+const corsOptions = {
+  origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app", "https://deft-crostata-22e21b.netlify.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 
 const db = mysql.createConnection({
