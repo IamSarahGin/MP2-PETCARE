@@ -19,7 +19,7 @@ const ContactUsPage = () => {
 
     try {
       // Save inquiry to backend
-      await axios.post('https://mp2-petcare.onrender.com/contacts', {
+      await axios.post('http://localhost:3001.com/contacts', {
         firstName,
         lastName,
         emailAddress,

@@ -17,7 +17,7 @@ const DrawerComponent = ({ userNavData, handleLogout }) => {
 
     const handleLogoutClick = () => {
         console.log("Logging out...");
-        axios.get('https://mp2-petcare.onrender.com/logout', { withCredentials: true })
+        axios.get('http://localhost:3001.com/logout', { withCredentials: true })
             .then(res => {
                 console.log("Logout response:", res);
                 if (res.status === 200) {

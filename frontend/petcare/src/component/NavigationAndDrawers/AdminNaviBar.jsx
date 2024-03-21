@@ -27,7 +27,7 @@ const AdminNaviBar = ({ isAdmin }) => {
     useEffect(() => {
         const fetchAdminNavData = async () => {
             try {
-                const response = await axios.get('https://mp2-petcare.onrender.com/admin_navigation');
+                const response = await axios.get('http://localhost:3001.com/admin_navigation');
                 setAdminNavData(response.data[0]);
             } catch (error) {
                 console.error('Error fetching navigation data:', error);
