@@ -9,7 +9,7 @@ const HappyFurparentsPage = () => {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await axios.get('https://mp2-petcare.onrender.com/api/happyFurparentsPage');
+        const response = await axios.get('http://localhost:3001/api/happyFurparentsPage');
         setRecords(response.data);
       } catch (error) {
         console.error('Error fetching records:', error);

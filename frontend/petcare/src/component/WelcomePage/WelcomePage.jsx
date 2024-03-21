@@ -16,7 +16,7 @@ const WelcomePage = () => {
 
 useEffect(() => {
   axios.defaults.withCredentials = true;
-  axios.get('https://mp2-petcare.onrender.com/auth/status')
+  axios.get('http://localhost:3001/auth/status')
     .then(res => {
       if (res.data.status === 'Success') {
         setAuth(true);
