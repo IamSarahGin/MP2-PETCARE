@@ -206,7 +206,7 @@ export default Navibar;
 //     useEffect(() => {
 //         const fetchNavData = async () => {
 //             try {
-//                 const response = await axios.get('https://mp2-petcare.onrender.com/navigation');
+//                 const response = await axios.get('http://localhost:3001/navigation');
 //                 setNavData(response.data[0]);
 //                 setLoading(false);
 //             } catch (error) {

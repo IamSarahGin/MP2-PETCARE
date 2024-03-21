@@ -12,7 +12,7 @@ const ApprovedDashBoard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get('https://mp2-petcare.onrender.com/api/user/profile', { withCredentials: true });
+                const response = await axios.get('http://localhost:3001/api/user/profile', { withCredentials: true });
                 const userData = response.data;
                 const userRole = userData.role;
                 setIsAdmin(userRole === 'admin');

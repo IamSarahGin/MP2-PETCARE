@@ -119,7 +119,7 @@ export default AdminDashboard;
 //     useEffect(() => {
 //         const fetchUserData = async () => {
 //             try {
-//                 const response = await axios.get('https://mp2-petcare.onrender.com/api/user/profile', { withCredentials: true });
+//                 const response = await axios.get('http://localhost:3001/api/user/profile', { withCredentials: true });
 //                 const userData = response.data;
 //                 const userRole = userData.role;
 //                 setIsAdmin(userRole === 'admin');
@@ -137,7 +137,7 @@ export default AdminDashboard;
 
 //     const fetchPendingBookings = async () => {
 //         try {
-//             const response = await axios.get('https://mp2-petcare.onrender.com/api/bookings/pending', { withCredentials: true });
+//             const response = await axios.get('http://localhost:3001/api/bookings/pending', { withCredentials: true });
 //             setPendingBookings(response.data);
 //         } catch (error) {
 //             console.error('Error fetching pending bookings:', error);
@@ -150,7 +150,7 @@ export default AdminDashboard;
 
 //     const handleApproveBooking = async (bookingId) => {
 //         try {
-//             await axios.post('https://mp2-petcare.onrender.com/api/bookings/approve', { bookingId }, { withCredentials: true });
+//             await axios.post('http://localhost:3001/api/bookings/approve', { bookingId }, { withCredentials: true });
 //             reloadPendingBookings(); // Reload pending bookings after approval
 //             navigate('/approved/list'); // Navigate to the approved list
 //         } catch (error) {
@@ -160,7 +160,7 @@ export default AdminDashboard;
 
 //     const handleRejectBooking = async (bookingId) => {
 //         try {
-//             await axios.post('https://mp2-petcare.onrender.com/api/bookings/reject', { bookingId }, { withCredentials: true });
+//             await axios.post('http://localhost:3001/api/bookings/reject', { bookingId }, { withCredentials: true });
 //             reloadPendingBookings(); // Reload pending bookings after rejection
 //             navigate('/rejected/list'); // Navigate to the rejected list
 //         } catch (error) {
