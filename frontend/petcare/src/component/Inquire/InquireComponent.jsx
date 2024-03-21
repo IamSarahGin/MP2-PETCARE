@@ -53,7 +53,7 @@ const InquireComponent = () => {
   
     // Save inquiry to backend
     try {
-      await axios.post('http://localhost:3001/inquiries', {
+      await axios.post('https://mp2-petcare.onrender.com/inquiries', {
         inquire: inquire,
         description: description,
         message: message,

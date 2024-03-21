@@ -33,7 +33,7 @@ const Register = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        axios.post('http://localhost:3001/register', values)
+        axios.post('https://mp2-petcare.onrender.com/register', values)
             .then(res => {
                 if (res.data.Status === 'Success') {
                     setAlertMessage('Account created');

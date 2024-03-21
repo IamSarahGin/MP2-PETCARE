@@ -30,7 +30,7 @@ const ApprovedDashBoard = () => {
     useEffect(() => {
         const fetchPendingBookings = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/bookings/approved', { withCredentials: true });
+                const response = await axios.get('https://mp2-petcare.onrender.com/api/bookings/approved', { withCredentials: true });
                 setPendingBookings(response.data);
             } catch (error) {
                 console.error('Error fetching pending bookings:', error);
