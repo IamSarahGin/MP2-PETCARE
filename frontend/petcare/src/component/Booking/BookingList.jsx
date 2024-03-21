@@ -9,7 +9,7 @@ const BookingList = () => {
 
     useEffect(() => {
         // Fetch bookings data
-        axios.get('http://localhost:3001/bookings')
+        axios.get('https://mp2-petcare.onrender.com/bookings')
             .then(response => {
                 setBookings(response.data);
             })
@@ -114,7 +114,7 @@ export default BookingList;
 
 //     useEffect(() => {
 //         // Fetch bookings data
-//         axios.get('http://localhost:3001/bookings')
+//         axios.get('https://mp2-petcare.onrender.com/bookings')
 //             .then(response => {
 //                 setBookings(response.data);
 //             })
@@ -221,7 +221,7 @@ export default BookingList;
 //     useEffect(() => {
 //         const token = localStorage.getItem('token');
 //         if (token) {
-//             axios.get('http://localhost:3001/bookings', {
+//             axios.get('https://mp2-petcare.onrender.com/bookings', {
 //                 headers: {
 //                     Authorization: `Bearer ${token}`
 //                 }
