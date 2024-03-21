@@ -26,11 +26,12 @@ const Login = () => {
     fetchImage();
   }, []);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/login', values, { withCredentials: true });
       if (response.data.Status === "Success") {
+        // Store token in local storage
+        localStorage.setItem('token', response.data.token);
         navigate(response.data.role === "user" ? '/welcome' : '/admin/dashboard');
       } else {
         setError(response.data.Error || 'Login failed');
@@ -39,6 +40,11 @@ const Login = () => {
       setError('An error occurred during login');
       console.error('Login error:', error);
     }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleLogin();
   };
 
   return (<>
@@ -79,8 +85,8 @@ const Login = () => {
         </div>
       </section>
     </div>
-     <Footer/>
-     </>
+    <Footer/>
+  </>
   );
 };
 
