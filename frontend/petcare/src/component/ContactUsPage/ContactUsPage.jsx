@@ -19,7 +19,7 @@ const ContactUsPage = () => {
 
     try {
       // Save inquiry to backend
-      await axios.post('http://localhost:3001.com/contacts', {
+      await axios.post('http://localhost:3001/contacts', {
         firstName,
         lastName,
         emailAddress,

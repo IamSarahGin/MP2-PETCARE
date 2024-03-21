@@ -12,7 +12,7 @@ const WelcomePage = () => {
   const [firstName, setFirstName] = useState('');
   const navigate = useNavigate();
 
-  // In the WelcomePage component
+ 
 
 useEffect(() => {
   axios.defaults.withCredentials = true;
