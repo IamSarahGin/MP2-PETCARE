@@ -44,6 +44,15 @@ const verifyUser = (req, res, next) => {
     });
   }
 };
+// Routes
+app.get('/', verifyUser, (req, res) => {
+  return res.json({
+    Status: "Success",
+    firstName: req.firstName,
+    email: req.email,
+    userId: req.userId
+  });
+});
 
 // Middleware to verify admin role
 const verifyAdmin = (req, res, next) => {
@@ -55,15 +64,6 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-// Routes
-app.get('/', verifyUser, (req, res) => {
-  return res.json({
-    Status: "Success",
-    firstName: req.firstName,
-    email: req.email,
-    userId: req.userId
-  });
-});
 
 // API endpoint to fetch user profile data
 app.get('/api/user/profile', verifyUser, (req, res) => {
