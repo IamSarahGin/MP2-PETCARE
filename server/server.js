@@ -441,7 +441,7 @@ app.post('/contacts', (req, res) => {
   if (!firstName || !lastName || !emailAddress || !mobileNumber || !inquireAbout) {
     return res.status(400).json({ error: 'Incomplete data provided' });
   }
-  const query = 'INSERT INTO contactUs (firstName, lastName, emailAddress, mobileNumber, inquireAbout, moreDetails) VALUES (?, ?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO contactus (firstName, lastName, emailAddress, mobileNumber, inquireAbout, moreDetails) VALUES (?, ?, ?, ?, ?, ?)';
   db.query(query, [firstName, lastName, emailAddress, mobileNumber, inquireAbout, moreDetails], (err, results) => {
     if (err) {
       console.error('Error adding contact:', err);
