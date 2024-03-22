@@ -10,7 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
-    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app","https://mp-2-pet-care-4mm6c2rg3-iamsarahgins-projects.vercel.app" ],
+    origin: ["http://localhost:3000", "https://mp-2-pet-care.vercel.app","https://mp-2-pet-care-4mm6c2rg3-iamsarahgins-projects.vercel.app","https://65fd1c0d0168fccbb8a1a90d--tangerine-centaur-aabad6.netlify.app" ],
     method: ["POST", "GET"],
     credentials: true
 }));
