@@ -27,7 +27,7 @@ const db = mysql.createConnection({
 
 // Middleware to verify user authentication
 const verifyUser = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies.token || req.cookies._vercel_jwt; // Check both token and _vercel_jwt
   if (!token) {
     return res.status(401).json({ error: "You are not authenticated" });
   } else {
