@@ -115,35 +115,63 @@ app.post('/register', (req, res) => {
     });
 });
 
-// API endpoint to authenticate users
+// // API endpoint to authenticate users
+// app.post('/login', (req, res) => {
+//   const { email, password } = req.body;
+//   const sql = 'SELECT * FROM users WHERE email=?';
+//   db.query(sql, [email], (err, data) => {
+//       if (err) return res.json({ Error: "Login error in server" });
+//       if (data.length > 0) {
+//           bcrypt.compare(password.toString(), data[0].password, (err, response) => {
+//               if (err) return res.json({ Error: "Password compare error" });
+//               if (response) {
+//                   const userId = data[0].userId;
+//                   const firstName = data[0].firstName;
+//                   const email = data[0].email;
+//                   const role = data[0].role; // Include user role
+//                   // Generate token
+//                   const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
+//                   // Set token in cookie
+//                   res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
+//                   return res.json({ Status: "Success", role: role }); 
+//               } else {
+//                   return res.json({ Error: "Password not matched" });
+//               }
+//           });
+//       } else {
+//           return res.json({ Error: "No email existed" });
+//       }
+//   });
+// });
+//API endpoint to authenticate users
 app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  const sql = 'SELECT * FROM users WHERE email=?';
-  db.query(sql, [email], (err, data) => {
-      if (err) return res.json({ Error: "Login error in server" });
-      if (data.length > 0) {
-          bcrypt.compare(password.toString(), data[0].password, (err, response) => {
-              if (err) return res.json({ Error: "Password compare error" });
-              if (response) {
-                  const userId = data[0].userId;
-                  const firstName = data[0].firstName;
-                  const email = data[0].email;
-                  const role = data[0].role; // Include user role
-                  // Generate token
-                  const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
-                  // Set token in cookie
-                  res.cookie("token", token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
-                  return res.json({ Status: "Success", role: role }); 
-              } else {
-                  return res.json({ Error: "Password not matched" });
-              }
-          });
-      } else {
-          return res.json({ Error: "No email existed" });
-      }
-  });
+    const { email, password } = req.body;
+    const sql = 'SELECT * FROM users WHERE email=?';
+    db.query(sql, [email], (err, data) => {
+        if (err) return res.json({ Error: "Login error in server" });
+        if (data.length > 0) {
+            bcrypt.compare(password.toString(), data[0].password, (err, response) => {
+                if (err) return res.json({ Error: "Password compare error" });
+                if (response) {
+                    const userId = data[0].userId;
+                    const firstName = data[0].firstName;
+                    const email = data[0].email;
+                    const role = data[0].role; // Include user role
+                    // Generate token
+                    const token = jwt.sign({ userId, firstName, email, role }, "jwt-secret-key", { expiresIn: '1d' });
+                    // Set token in cookie
+                    const cookieName = process.env.NODE_ENV === 'production' ? '_vercel_jwt' : 'token';
+                    res.cookie(cookieName, token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 }); // 1 day expiry
+                    return res.json({ Status: "Success", role: role }); 
+                } else {
+                    return res.json({ Error: "Password not matched" });
+                }
+            });
+        } else {
+            return res.json({ Error: "No email existed" });
+        }
+    });
 });
-
 // API endpoint to get user authentication status
 app.get('/auth/status', verifyUser, (req, res) => {
     return res.json({
